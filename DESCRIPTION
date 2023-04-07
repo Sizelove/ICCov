@@ -1,0 +1,12 @@
+Package: ICCov
+Type: Package
+Title: Semiparametric Regression with an Interval-Censored Covariate
+Version: 1.0
+Date: 2023-04-07
+Author: Richard J. Sizelove
+Maintainer: Richard J. Sizelove <sizelove@gmail.com>
+Description: This package conducts nonparametric maximum likelihood estimation of regression models for various responses depending on an interval-censored covariate. Current functionality includes a continuous variable, an analog to linear regression. Dependencies between the response and the interval-censored covariate can be specified through pre-specified or user-supplied functions. For full details, model description, and estimation procedures see Sizelove, Zeng, and Lin (2023).  
+License: What license is it under?
+Imports: Rcpp (>= 1.0.7)
+LinkingTo: Rcpp, RcppArmadillo
+RoxygenNote: 7.1.1
