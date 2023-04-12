@@ -1,35 +1,34 @@
+#'
 #' 
 #' 
 #' 
-#' @useDynLib ICCov
-timedResponse = function(response, measurement_time){
-  return(list("response" = response, "time" = measurement_time))
+#' Creates a "timedResponse" class variable for input into ICCov regression models
+#' @name timedResponse
+#' @param response A numeric response vector of interest
+#' @param measurement_time A numeric vector containing the measurement time for each element in response
+#' @export
+timedResponse <- function(response, measurement_time){
+  if(length(response) != length(measurement_time)){
+    stop("response and measurement_time must be the same length")
+  }
+  if(any(is.na(response_time)) | any(is.na(measurement_time))){
+    stop("Neither response nor measurement_time can contain NA values")
+  }
+  return_list = list("response" = response, "time" = measurement_time)
+  return(return_list)
 }
-## Usage:
 
-# formula: a formula of the form timedResponse(response, measurement_time) ~ Covariate + intCensCov("Name", Left, Right)
-
-# covariate_function: one of "indicator", "relu", or a user-supplied function for the relationship between the covariate and the intermediate event.
-   # supplying  a user-supplied function is currently experimental and may be unstable
-
-# data: a dataframe from which to read the variables
-
-# hazard formula: a formula object of the form ``~ Covariate1 + Covariate2" linking the intermediate event to covariates through the proportional hazards model
-
-# tolerance: a double value for convergence tolerance for the main EM algorithm
-
-# pl_tolerance: a double value for the profile likelihood method used for variance estimation
-
-# max_iter: an integer, number of iterations to perform
-
-# stepsize: a double for the stepsize to be used in profile likelihood estimation
-
-# Returns a list of metrics: bias, standard errors, standard error estimates, and coverage probability
-# An example call is: Results = ICCov_lm(timedResponse(Y, V) ~ Cov1 + Cov2 + (Cov1 + Cov2)*intCensCov("Event", Left, Right), covariate_function = "relu", data = Simulation_Data)
-# Call summary(Results) for easy-to-read results.
-
+#' Fit semiparametric regression models with interval-censored covariates
+#' @useDynLib ICCov
+#' @param formula A object of class `"formula"`: a symbolic description of the model to be fit. See `Details` for more information.
+#' @param covariate_function A `"function"` object which specifies how the intermediate event time and response are linked. See `Details` for examples.
+#' @param data A `"data.frame"` object containing the variables included in the model.
+#' @param data An optional object of class `"formula"` specifying how the intermediate event is linked to the covariates. If left absent, then the intermediate event will be modeled as dependent on all covariates included to the `formula` argument.
+#' @param tolerance A scalar value for the convergence tolerance of the EM algorithm.
+#' @param pl_tolerance A scalar value for the convergence tolerance of the profile likelihood method used for variance estimation.
+#' @param stepsize A scalar value for the stepsize used in the profile likelihood method. By default, 1/(5*n^1/2) is used.
 #' @export 
-ICCov_lm = function(formula, covariate_function, data, hazard_formula = NULL, tolerance = 1e-4, pl_tolerance = 1e-4, max_iter = 500, stepsize = NULL){
+ICCov_lm <- function(formula, covariate_function, data, hazard_formula = NULL, tolerance = 1e-4, pl_tolerance = 1e-4, max_iter = 500, stepsize = NULL){
   # if formula isn't class formula, exit
   #print("Here inside ICCov_lm")
   if(is.null(stepsize)){
